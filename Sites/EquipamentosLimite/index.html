@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Limite e Equipamentos</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="map.css">
+  <link rel="stylesheet" href="pagina.css">
+</head>
+<body>
+  <div class="conteiner">
+
+    <div class="dados">
+      <button id="abrirMenuBtn">Download</button>
+    
+      <div id="menuDownload" class="menu-download oculto">
+        <label for="tabelaSelect">Escolha um dado:</label>
+        <select id="tabelaSelect">
+          <option value="PMJ_Limite_municipal">Limite Municipal</option>
+          <option value="Equipamentos_educacao">Equipamentos</option>
+        </select>
+    
+        <label for="formatoSelect">Escolha o formato:</label>
+        <select id="formatoSelect">
+          <option value="shp">SHP</option>
+          <option value="kmz">KMZ</option>
+        </select>
+    
+        <button onclick="baixarSelecionado()">Exportar</button>
+      </div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+  
+  
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="map.js"></script>
+  <script src="pagina.js"></script>
+
+
+</body>
+</html>

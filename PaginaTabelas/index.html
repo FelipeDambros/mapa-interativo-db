@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Tabelas e Dados</title>
+    <style>
+        .tabela-list {
+            margin: 20px;
+        }
+        .tabela-list a {
+            display: block;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .geojson-btn {
+            margin-top: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Escolha uma Tabela</h1>
+    <div class="tabela-list" id="tabelas"></div>
+
+    <h1>Dados da Tabela</h1>
+    <table id="tabela-dados">
+        <thead>
+            <tr id="tabela-cabecalho"></tr>
+        </thead>
+        <tbody id="tabela-corpo"></tbody>
+    </table>
+
+    <button id="geojson-btn" class="geojson-btn" style="display:none;">Ver GeoJSON</button>
+    <pre id="geojson-output" style="display:none;"></pre>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Carregar as tabelas
+            $.get('http://localhost:3000/tabelas', function(tabelas) {
+                const tabelasDiv = $('#tabelas');
+                tabelas.forEach(tabela => {
+                    const link = $('<a>').text(tabela).attr('href', '#').click(function() {
+                        carregarTabela(tabela);
+                    });
+                    tabelasDiv.append(link);
+                });
+            });
+
+            // Função para carregar os dados da tabela e exibir
+            function carregarTabela(tabela) {
+                $.get(`http://localhost:3000/dados?tabela=${tabela}`, function(dados) {
+                    const cabecalho = $('#tabela-cabecalho');
+                    const corpo = $('#tabela-corpo');
+                    cabecalho.empty();  // Limpar cabeçalho antes de adicionar os novos dados
+                    corpo.empty();  // Limpar corpo da tabela antes de adicionar os novos dados
+
+                    if (dados.length > 0) {
+                        // Criar o cabeçalho da tabela baseado nas chaves da primeira linha
+                        const colunas = Object.keys(dados[0]);
+                        colunas.forEach(coluna => {
+                            cabecalho.append(`<th>${coluna}</th>`);
+                        });
+
+                        // Adicionar os dados no corpo da tabela
+                        dados.forEach(item => {
+                            const linha = $('<tr>');
+                            colunas.forEach(coluna => {
+                                linha.append(`<td>${item[coluna]}</td>`);
+                            });
+                            corpo.append(linha);
+                        });
+
+                        // Mostrar o botão para ver o GeoJSON
+                        $('#geojson-btn').show().click(function() {
+                            carregarGeoJSON(tabela);
+                        });
+                    } else {
+                        corpo.append('<tr><td colspan="100%">Sem dados disponíveis</td></tr>');
+                    }
+                });
+            }
+
+            // Função para carregar e exibir o GeoJSON
+            function carregarGeoJSON(tabela) {
+                $.get(`http://localhost:3000/geojson?tabela=${tabela}`, function(geojson) {
+                    $('#geojson-output').text(JSON.stringify(geojson, null, 2)).show();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
