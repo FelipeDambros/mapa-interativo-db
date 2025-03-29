@@ -199,4 +199,4 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(3001, () => console.log('✅ API rodando em http://localhost:3001'));
+server.listen(3001, () => console.log(' API rodando em http://localhost:3001'));
